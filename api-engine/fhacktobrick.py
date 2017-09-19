@@ -1,14 +1,14 @@
-from game import *
+from game import Ball, Brick, Cursor, Life, GameEngine
+from math import floor
 
 
 def add_lines_brick(n, resistance, width_screen):
-    Brick(resistance, 0, 0)
     tmp_bricks = []
-    template = Brick(0, 0)
+    template = Brick(3, 0, 0)
     leap_width = template.width+5;
     leap_height = template.width+5;
     for line in range(0, n):
-        for column in range(0, math.floor(width_screen/leap_width)):
+        for column in range(0, floor(width_screen/leap_width)):
             tmp_bricks.append(Brick(resistance, 5+column*leap_width, 5+line*leap_height))
 
     return tmp_bricks
@@ -59,15 +59,15 @@ def compute_game(ball, cursor, bricks, lifes, key_pressed):
     if touch == 'bottom':
         lifes = lifes[:-1]
     touches.append(touch)
-    touches.append(ball.touchedSide(cursor))
+    touches.append(ball.touched_side(cursor))
 
     for brick in bricks:
-        touch = ball.touchedSide(brick)
+        touch = ball.touched_side(brick)
         touches.append(touch)
         if touch != 'none':
             brick.increment_kicks()
 
-    bricks = [brick for brick in bricks if not brick.is_alive()]
+    bricks = [brick for brick in bricks if brick.is_alive()]
 
     change_ball_speed(touches)
     compute_cursor(key_pressed)
@@ -83,12 +83,12 @@ if __name__ == '__main__':
     ball.dx = -6
     ball.dy = -3
 
-    Brick(65, 54, 34)
     cursor = Cursor(width_screen/2, height_screen-30)
     bricks = add_lines_brick(2, 3, width_screen)
     lifes = [Life(5, height_screen-100),
              Life(50, height_screen-100),
              Life(100, height_screen-100)]
+    print(bricks)
 
     while len(bricks) > 0 and len(lifes) > 0:
         engine.handle_events()

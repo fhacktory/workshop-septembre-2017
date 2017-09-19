@@ -25,19 +25,19 @@ class Cube(object):
     def set_position(self, value):
         self.position = value
 
-    def touchedSide(self, element):
+    def touched_side(self, element):
         if self.x <= element.x+element.width <= self.x+10 and \
                 (element.y <= self.y <= element.y+element.height or element.y <= self.y+self.height <= element.y+element.height):
             return 'right'
-    
+
         if self.y <= element.y+element.width <= self.y+10 and \
                 (element.x <= self.x+self.width <= element.width or element.x <= self.x <= element.x + element.width):
             return 'bottom'
-    
+
         if self.x+self.width-10 <= element.x <= self.x+self.width and \
                 (element.y <= self.y <= element.y+element.height or element.y <= self.y+self.height <= element.y+element.height):
             return 'left'
-    
+
         if self.y+self.height-10 <= element.y <= self.y+self.height and \
                 (element.x <= self.x+self.width <= element.width or element.x <= self.x <= element.x + element.width):
             return 'top'
@@ -59,6 +59,9 @@ class Cube(object):
 class Ball(Cube):
     def __init__(self, x=0, y=0):
         super(Ball, self).__init__(x, y, os.path.join('assets', 'ball_black.png'))
+        self.sprite = pygame.transform.scale(self.sprite, (20, 20))
+        self.width = 20
+        self.height = 20
 
 
 class Cursor(Cube):
@@ -68,8 +71,7 @@ class Cursor(Cube):
 
 class Brick(Cube):
     def __init__(self, resistance, x=0, y=0):
-        print(resistance)
-        super(Brick, self).__init__(self, x, y)
+        super(Brick, self).__init__(x, y)
         self.resistance = resistance
         self.kicks = 0
         self.get_brick_image()
@@ -94,7 +96,10 @@ class Brick(Cube):
         self.set_image(os.path.join('assets', image.format(state=new_state)))
 
     def get_brick_state(self):
-        return math.floor(1 + 2*self.kicks/self.resistance)
+        if self.is_alive():
+            return math.floor(1 + 2*self.kicks/(self.resistance-1))
+        else:
+            return 3
 
 
 class Cursor(Cube):
@@ -105,8 +110,6 @@ class Cursor(Cube):
 class Life(Cube):
     def __init__(self, x=0, y=0):
         super(Life, self).__init__(x, y, os.path.join('assets', 'life.png'))
-
-
 
 
 class GameEngine():
